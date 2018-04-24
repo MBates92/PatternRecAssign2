@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 '''Functions'''
 ###############################################################################
 
+def fn(x):
+    return np.sin(x)
+
 def gradient_ascent(x,f,steps):
 
     df = np.gradient(f,x)
@@ -17,6 +20,8 @@ def gradient_ascent(x,f,steps):
     for i in range(0,steps):
         
         if next_idx == steps:
+            return np.nan
+        if next_idx == 0:
             return np.nan
     
         grad = float(df[next_idx])
@@ -32,6 +37,8 @@ def gradient_ascent(x,f,steps):
             conv.append(next_idx)
         if i == steps-1:
             conv.append(next_idx)
+        if abs(grad)<0.0001:
+            return x[next_idx]
             
     conv = np.asarray(conv)    
     guess = []
@@ -47,7 +54,7 @@ def gradient_ascent(x,f,steps):
 ###############################################################################
 
 x = np.linspace(-6*np.pi,6*np.pi,1000)
-f = np.sin(x)
+f = fn(x)
 steps = 1000
 
 guesses = []
@@ -58,11 +65,12 @@ for k in range(0,iterations):
     guesses.append(gradient_ascent(x,f,steps))
 
 guesses = np.asarray(guesses)
+guesses = guesses[~np.isnan(guesses)]
 a,axarr = plt.subplots(2,sharex=True)
 axarr[0].plot(x, f,c='g')
-axarr[0].scatter(guesses,np.sin(guesses),c='r')
+axarr[0].scatter(guesses,fn(guesses),c='r')
 axarr[0].set_title('1000 tries')
 axarr[0].set_ylabel('f(x)=sin(x)')
-axarr[1].hist(x,bins = 6,rwidth = 0.5,edgecolor="k")
+axarr[1].hist(guesses,edgecolor="k")
 axarr[1].set_xlabel('x')
 axarr[1].set_ylabel('N')
